@@ -1,0 +1,20 @@
+# type Task @model {
+#   id: ID!
+#   title: String!
+#   description: String
+#   status: String
+# }
+
+# type Note @model {
+#   id: ID!
+#   content: String!
+# }
+
+type Task @model {
+  id: ID!
+  name: String!
+  description: String!
+  date: String!
+  time: String!
+  status: Boolean!
+}
