@@ -12,7 +12,7 @@ const TodoComponent = (props) => {
     const [itemList, setItemList] = useState([]);
 
     useEffect(() => {
-        
+
         fetchTasks();
         const subscription = DataStore.observe(Todo).subscribe(() => fetchTasks());
         return () => subscription.unsubscribe();
@@ -112,15 +112,18 @@ const TodoComponent = (props) => {
 
             <div className="todo-container">
                 <div className="new-item-container">
-                    <form>
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        console.log("hit in form");
+                        createTask();
+                    }} >
                         <input required type="text" placeholder="Name" name="itemName" value={itemName} onChange={(e) => setItemName(e.target.value)} />
                         <input required type="text" placeholder="Description" name="itemDesc" value={itemDesc} onChange={(e) => setitemDesc(e.target.value)} />
                         <input required type="date" name="itemDate" value={itemDate} onChange={(e) => setItemDate(e.target.value)} />
                         <input required type="time" name="itemTime" value={itemTime} onChange={(e) => setitemTime(e.target.value)} />
 
-                        <i class="fa-solid fa-plus new-item"
-                            onClick={createTask}>
-                        </i>
+                        <input type="submit" class="fa-solid fa-plus new-item" value="&#xf067;" />
+
                     </form>
                 </div>
 
