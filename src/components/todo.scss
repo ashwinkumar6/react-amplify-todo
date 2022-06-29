@@ -1,79 +1,104 @@
-@import './index.scss';
+@import "./index.scss";
+
+@keyframes item-appear {
+  from {
+    height: 0.1rem;
+    // color: $white;
+  }
+  to {
+    height: 2.1rem;
+    // color: $black;
+  }
+}
+
+@keyframes item-disappear {
+  from {
+    height: 2.1rem;
+  }
+  to {
+    height: 0.1rem;
+  }
+}
 
 .todo-title {
-    text-align: center;
-    font-size: 3rem;
-    font-weight: bolder;
-    color: $white;
+  text-align: center;
+  font-size: 3rem;
+  font-weight: bolder;
+  color: $white;
 }
 
 .todo-container {
-    height: 30rem;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    margin-top: 5rem;
+  height: 30rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 5rem;
 
-    .new-item-container {
-        input {
-            width: 11rem;
-            height: 2rem;
-            margin-left:0.5rem;
-        }
-        .new-item{
-            color: $white;
-            background-color: $red;
-            padding: 0.5rem;
-            font-size: 1rem;
-            cursor: pointer;
-            align-self: center;
-            margin-left:0.5rem;
-        }    
+  .new-item-container {
+    input {
+      width: 11rem;
+      height: 2rem;
+      margin-left: 0.5rem;
     }
-
-    .todo-list-container {
-        margin-top: 2rem;
-        width: 40rem;
-
-        .todo-list-item {
-            padding-top: 0.2rem;
-            display: flex;
-            flex-direction: row;
-
-            .text-container {
-                background-color: $white;
-                width: -webkit-fill-available;
-                padding: 0.2rem 0.5rem;
-
-                display: grid;
-                grid-template-columns: 33.33% 33.33% 33.33%;
-
-                .item {
-                    margin: 0rem, 5rem;
-                }
-            }
-            .item-checked {
-                text-decoration: line-through;
-                opacity: 0.5;
-            }
-
-            .done-button {
-                color: $white;
-                background-color: $green;
-                padding: 0.5rem;
-                font-size: 1rem;
-                cursor: pointer;
-                align-self: center;
-            }
-
-            .delete-button {
-                color: $white;
-                background-color: $red;
-                padding: 0.5rem 0.6rem;
-                font-size: 1rem;
-                cursor: pointer;
-                align-self: center;
-            }
-        }
+    .new-item {
+      color: $white;
+      background-color: $red;
+      padding: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      align-self: center;
+      margin-left: 0.5rem;
     }
+  }
+
+  .todo-list-container {
+    margin-top: 2rem;
+    width: 40rem;
+
+    .todo-list-item {
+      padding-top: 0.2rem;
+      display: flex;
+      flex-direction: row;
+      height: 2.1rem;
+      animation-name: item-appear;
+      animation-duration: 0.5s;
+
+      .text-container {
+        background-color: $white;
+        width: -webkit-fill-available;
+        padding: 0.2rem 0.5rem;
+
+        display: grid;
+        grid-template-columns: 33.33% 33.33% 33.33%;
+
+        .item {
+          margin: 0rem, 5rem;
+          animation-name: item-appear;
+          animation-duration: 0.5s;
+        }
+      }
+      .item-checked {
+        text-decoration: line-through;
+        opacity: 0.5;
+      }
+
+      .done-button {
+        color: $white;
+        background-color: $green;
+        padding: 0.5rem;
+        font-size: 1rem;
+        cursor: pointer;
+        align-self: center;
+      }
+
+      .delete-button {
+        color: $white;
+        background-color: $red;
+        padding: 0.5rem 0.6rem;
+        font-size: 1rem;
+        cursor: pointer;
+        align-self: center;
+      }
+    }
+  }
 }

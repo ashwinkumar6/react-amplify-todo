@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { DataStore } from 'aws-amplify';
-import { Task } from "../models"
+import { Todo } from "../models"
 
 import './todo.scss';
 
-const Todo = (props) => {
+const TodoComponent = (props) => {
     const [itemName, setItemName] = useState("");
     const [itemDesc, setitemDesc] = useState("");
     const [itemDate, setItemDate] = useState("");
@@ -12,14 +12,15 @@ const Todo = (props) => {
     const [itemList, setItemList] = useState([]);
 
     useEffect(() => {
+        
         fetchTasks();
-        const subscription = DataStore.observe(Task).subscribe(() => fetchTasks());
+        const subscription = DataStore.observe(Todo).subscribe(() => fetchTasks());
         return () => subscription.unsubscribe();
     });
 
     async function fetchTasks() {
         try {
-            const taskList = await DataStore.query(Task);
+            const taskList = await DataStore.query(Todo);
             // console.log("getting tasklist:", taskList);
             setItemList([...taskList]);
         } catch (e) {
@@ -39,7 +40,7 @@ const Todo = (props) => {
 
         // adding data to db
         try {
-            await DataStore.save(new Task(data));
+            await DataStore.save(new Todo(data));
         } catch (e) {
             console.log("error", e)
         }
@@ -49,6 +50,58 @@ const Todo = (props) => {
         setitemDesc("");
         setItemDate("");
         setitemTime("");
+    }
+
+    async function itemCompleted(item) {
+        try {
+            // update the status of the item
+            console.log(item);
+            await DataStore.save(
+                Todo.copyOf(item, updated => {
+                    updated.status = !updated.status;
+                })
+            );
+        } catch (e) {
+            console.log("error in marking task complete", e);
+        }
+    }
+
+    async function deleteItem(item) {
+        try {
+            await DataStore.delete(item);
+        } catch (e) {
+            console.log("error in deleting task", e);
+        }
+    }
+
+    // only displays notCompleted/ pending  items by default
+    const renderListItems = (showCompletedItems = false) => {
+        return (
+            <div className='todo-list-container'>
+                {itemList
+                    .filter(listItem => listItem.status === showCompletedItems)
+                    .map((listItem, index) => {
+                        const { id, name, description, date, time, status } = listItem;
+
+                        return (
+                            <div className="todo-list-item" key={id}>
+                                <div className={"text-container " + (status ? "item-checked" : "")} >
+                                    <span className='item'>{name}</span>
+                                    <span className='item'>{description}</span>
+                                    <span className='item'>{`${date} ${time}`}</span>
+                                </div>
+
+                                <i class="fa-solid fa-check done-button"
+                                    onClick={() => { itemCompleted(listItem); }}>
+                                </i>
+
+                                <i class="fa-solid fa-xmark delete-button"
+                                    onClick={() => { deleteItem(listItem); }}>
+                                </i>
+                            </div>)
+                    })}
+            </div>
+        );
     }
 
     return (
@@ -68,73 +121,18 @@ const Todo = (props) => {
                         <i class="fa-solid fa-plus new-item"
                             onClick={createTask}>
                         </i>
-
-
                     </form>
                 </div>
 
-                <div className='todo-list-container'>
-                    {itemList.map((listItem, index) => {
-                        const { itemName, itemDesc, itemDate, itemTime, itemComplete } = listItem;
+                {/* render pending items */}
+                {renderListItems(false)}
 
-                        return (
-                            <div className="todo-list-item" key={index}>
-
-                                <div className={"text-container " + (itemComplete ? "item-checked" : "")} >
-                                    <span className='item'>{itemName}</span>
-                                    <span className='item'>{itemDesc}</span>
-                                    <span className='item'>{`${itemDate} ${itemTime}`}</span>
-                                </div>
-                                <i class="fa-solid fa-check done-button"
-                                    onClick={() => {
-                                        itemList[index].itemComplete = !itemList[index].itemComplete;
-
-                                        if (itemList[index].itemComplete) {
-                                            itemList.push(...itemList.splice(index, 1));
-                                        } else {
-                                            itemList.unshift(...itemList.splice(index, 1));
-                                        }
-
-                                        setItemList([...itemList]);
-
-                                        // update data to db
-                                        // try {
-                                        //     await DataStore.save(new Task(data));
-                                        // } catch (e) {
-                                        //     console.log("error in changing status of task", e)
-                                        // }
-
-                                    }}>
-                                </i>
-
-                                <i class="fa-solid fa-xmark delete-button"
-                                    onClick={async() => {
-                                        try {
-                                            // itemList.splice(index, 1)
-                                            const job = await DataStore.query(Task, itemList[index].id);
-                                            await DataStore.delete(job);
-                                        } catch (e) {
-                                            console.log("error in deleting task", e);
-                                        }
-
-                                        // setItemList([...itemList]);
-
-                                        // // update data to db
-                                        // try {
-                                        //     await DataStore.save(new Task(data));
-                                        // } catch (e) {
-                                        //     console.log("error in deleting task", e)
-                                        // }
-
-                                    }}>
-                                </i>
-                            </div>)
-                    })}
-                </div>
+                {/* render completed items */}
+                {renderListItems(true)}
             </div>
         </div>
 
     );
 }
 
-export default Todo;
+export default TodoComponent;
