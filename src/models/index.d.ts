@@ -15,6 +15,7 @@ export declare class Todo {
   readonly date: string;
   readonly time: string;
   readonly status: boolean;
+  readonly fileName: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   constructor(init: ModelInit<Todo, TodoMetaData>);

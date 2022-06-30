@@ -15,4 +15,5 @@ type Todo @model @auth(rules: [{ allow: owner, ownerField: "owner" }]) {
   date: String!
   time: String!
   status: Boolean!
+  fileName: String!
 }

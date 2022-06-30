@@ -10,6 +10,7 @@ export const onCreateTodo = /* GraphQL */ `
       date
       time
       status
+      fileName
       createdAt
       updatedAt
       _version
@@ -28,6 +29,7 @@ export const onUpdateTodo = /* GraphQL */ `
       date
       time
       status
+      fileName
       createdAt
       updatedAt
       _version
@@ -46,6 +48,7 @@ export const onDeleteTodo = /* GraphQL */ `
       date
       time
       status
+      fileName
       createdAt
       updatedAt
       _version

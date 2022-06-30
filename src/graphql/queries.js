@@ -10,6 +10,7 @@ export const getTodo = /* GraphQL */ `
       date
       time
       status
+      fileName
       createdAt
       updatedAt
       _version
@@ -33,6 +34,7 @@ export const listTodos = /* GraphQL */ `
         date
         time
         status
+        fileName
         createdAt
         updatedAt
         _version
@@ -65,6 +67,7 @@ export const syncTodos = /* GraphQL */ `
         date
         time
         status
+        fileName
         createdAt
         updatedAt
         _version

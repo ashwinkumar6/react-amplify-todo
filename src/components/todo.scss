@@ -71,12 +71,17 @@
         padding: 0.2rem 0.5rem;
 
         display: grid;
-        grid-template-columns: 33.33% 33.33% 33.33%;
+        grid-template-columns: 25% 25% 25% 25%;
 
         .item {
           margin: 0rem, 5rem;
           animation-name: item-appear;
           animation-duration: 0.5s;
+        }
+        .fileItem {
+          text-decoration: underline;
+          color: $red;
+          cursor: pointer;
         }
       }
       .item-checked {

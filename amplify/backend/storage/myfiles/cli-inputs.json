@@ -1,0 +1,14 @@
+{
+  "resourceName": "myfiles",
+  "policyUUID": "5fb05d0e",
+  "bucketName": "todoreact1aba0114d1aa471982045d70cd8fda2d",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

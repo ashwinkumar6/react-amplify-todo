@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { DataStore } from 'aws-amplify';
+import { DataStore, Storage } from 'aws-amplify';
 import { Todo } from "../models"
-
+import { downloadBlob } from "../utils/file-utils";
 import './todo.scss';
+
+Storage.configure({ level: 'private' });
 
 const TodoComponent = (props) => {
     const [itemName, setItemName] = useState("");
     const [itemDesc, setitemDesc] = useState("");
     const [itemDate, setItemDate] = useState("");
     const [itemTime, setitemTime] = useState("");
+    const [itemFile, setItemFile] = useState(null);
     const [itemList, setItemList] = useState([]);
 
     useEffect(() => {
-
         fetchTasks();
         const subscription = DataStore.observe(Todo).subscribe(() => fetchTasks());
         return () => subscription.unsubscribe();
@@ -30,13 +32,18 @@ const TodoComponent = (props) => {
 
     async function createTask() {
         console.log("making api call now");
+
         const data = {
             "name": itemName,
             "description": itemDesc,
             "date": itemDate,
             "time": itemTime,
+            "fileName": itemFile.name,
             "status": false
         }
+
+        // upload file to s3
+        uploadFile(itemFile);
 
         // adding data to db
         try {
@@ -45,11 +52,11 @@ const TodoComponent = (props) => {
             console.log("error", e)
         }
 
-        // setItemList([...itemList, data]);
         setItemName("");
         setitemDesc("");
         setItemDate("");
         setitemTime("");
+        setItemFile(null);
     }
 
     async function itemCompleted(item) {
@@ -74,6 +81,29 @@ const TodoComponent = (props) => {
         }
     }
 
+    async function uploadFile(file) {
+        try {
+            await Storage.put(file.name, file, {
+                // contentType is optional
+                contentType: "image/png",
+            });
+        } catch (e) {
+            console.log("Error uploading file: ", e);
+        }
+    }
+
+    async function downloadFile(fileName) {
+        try {
+            const result = await Storage.get(fileName, { download: true });
+            downloadBlob(result.Body, fileName);
+
+            // // get key from Storage.list
+            // const signedURL = await Storage.get(fileName);
+        } catch (e) {
+            console.log("unable to get file", e);
+        }
+    }
+
     // only displays notCompleted/ pending  items by default
     const renderListItems = (showCompletedItems = false) => {
         return (
@@ -81,7 +111,7 @@ const TodoComponent = (props) => {
                 {itemList
                     .filter(listItem => listItem.status === showCompletedItems)
                     .map((listItem, index) => {
-                        const { id, name, description, date, time, status } = listItem;
+                        const { id, name, description, date, time, fileName, status } = listItem;
 
                         return (
                             <div className="todo-list-item" key={id}>
@@ -89,6 +119,10 @@ const TodoComponent = (props) => {
                                     <span className='item'>{name}</span>
                                     <span className='item'>{description}</span>
                                     <span className='item'>{`${date} ${time}`}</span>
+                                    <span className='item fileItem'
+                                        onClick={() => { downloadFile(fileName); }}>
+                                        {fileName}
+                                    </span>
                                 </div>
 
                                 <i class="fa-solid fa-check done-button"
@@ -121,6 +155,8 @@ const TodoComponent = (props) => {
                         <input required type="text" placeholder="Description" name="itemDesc" value={itemDesc} onChange={(e) => setitemDesc(e.target.value)} />
                         <input required type="date" name="itemDate" value={itemDate} onChange={(e) => setItemDate(e.target.value)} />
                         <input required type="time" name="itemTime" value={itemTime} onChange={(e) => setitemTime(e.target.value)} />
+
+                        <input required type="file" onChange={(e) => { setItemFile(e.target.files[0]) }} />;
 
                         <input type="submit" class="fa-solid fa-plus new-item" value="&#xf067;" />
 
