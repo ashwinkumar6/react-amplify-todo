@@ -139,14 +139,14 @@ const LoginComponent = (props) => {
                     <button onClick={() => Auth.signOut()}>Sign Out</button>
                 </div>
 
-                {/* <div>
+                <div>
                     <p>User: {user ? JSON.stringify(user.attributes) : 'None'}</p>
                     {user ? (
                         <button onClick={() => Auth.signOut()}>Sign Out</button>
                     ) : (
-                        <button onClick={() => Auth.federatedSignIn()}>Federated Sign In</button>
+                        <button onClick={() => Auth.federatedSignIn({ provider: CognitoHostedUIIdentityProvider.Google })}>Federated Sign In</button>
                     )}
-                </div> */}
+                </div>
 
                 <input required type="text" placeholder="User Name" value={loginUserName}
                     className="form-input" onChange={(e) => setLoginUserName(e.target.value)} />
