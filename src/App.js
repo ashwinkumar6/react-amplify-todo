@@ -1,31 +1,23 @@
 import './App.scss';
-import Todo from './components/todo.js'
+import Todo from './components/todo/todo';
+import Login from './components/login/login';
 
-import { Amplify } from 'aws-amplify';
-import { withAuthenticator } from '@aws-amplify/ui-react';
+// import { Amplify } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
-import awsExports from './aws-exports';
+// import awsExports from './aws-exports';
 
-Amplify.configure(awsExports);
+// Amplify.configure(awsExports);
 
-function App({ signOut, user }) {
+function App() {
   return (
     <div className="App">
       <div>
-        <Todo />
-      </div>
-
-      <div>
-        <h1>Hello {user.username}</h1>
-        <button onClick={() => {
-          signOut();
-          Amplify.DataStore.clear();
-        }}>
-          sign out
-        </button>
+        <Login>
+          <Todo />
+        </Login>
       </div>
     </div>
   );
 }
 
-export default withAuthenticator(App);
+export default App;

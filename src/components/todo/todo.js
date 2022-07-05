@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataStore, Storage } from 'aws-amplify';
-import { Todo } from "../models"
-import { downloadBlob } from "../utils/file-utils";
+import { Todo } from '../../models';
+import { downloadBlob } from '../../utils/file-utils';
 import './todo.scss';
 
 Storage.configure({ level: 'private' });
@@ -23,7 +23,6 @@ const TodoComponent = (props) => {
     async function fetchTasks() {
         try {
             const taskList = await DataStore.query(Todo);
-            // console.log("getting tasklist:", taskList);
             setItemList([...taskList]);
         } catch (e) {
             console.log("error in fetching", e);
@@ -96,9 +95,6 @@ const TodoComponent = (props) => {
         try {
             const result = await Storage.get(fileName, { download: true });
             downloadBlob(result.Body, fileName);
-
-            // // get key from Storage.list
-            // const signedURL = await Storage.get(fileName);
         } catch (e) {
             console.log("unable to get file", e);
         }
@@ -140,6 +136,13 @@ const TodoComponent = (props) => {
 
     return (
         <div className='todo-comp'>
+            <div className='logout-container'>
+                <div className='name'>{props.userInfoObj.data.username}</div>
+                <button onClick={() => { props.signOut(); }}>
+                    sign out
+                </button>
+            </div>
+
             <div className='todo-title'>
                 My Todo App
             </div>
@@ -148,13 +151,12 @@ const TodoComponent = (props) => {
                 <div className="new-item-container">
                     <form onSubmit={(e) => {
                         e.preventDefault();
-                        console.log("hit in form");
                         createTask();
                     }} >
-                        <input required type="text" placeholder="Name" name="itemName" value={itemName} onChange={(e) => setItemName(e.target.value)} />
-                        <input required type="text" placeholder="Description" name="itemDesc" value={itemDesc} onChange={(e) => setitemDesc(e.target.value)} />
-                        <input required type="date" name="itemDate" value={itemDate} onChange={(e) => setItemDate(e.target.value)} />
-                        <input required type="time" name="itemTime" value={itemTime} onChange={(e) => setitemTime(e.target.value)} />
+                        <input required className='form-input' type="text" placeholder="Name" name="itemName" value={itemName} onChange={(e) => setItemName(e.target.value)} />
+                        <input required className='form-input' type="text" placeholder="Description" name="itemDesc" value={itemDesc} onChange={(e) => setitemDesc(e.target.value)} />
+                        <input required className='form-input' type="date" name="itemDate" value={itemDate} onChange={(e) => setItemDate(e.target.value)} />
+                        <input required className='form-input' type="time" name="itemTime" value={itemTime} onChange={(e) => setitemTime(e.target.value)} />
 
                         <input required type="file" onChange={(e) => { setItemFile(e.target.files[0]) }} />;
 
