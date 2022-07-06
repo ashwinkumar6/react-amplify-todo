@@ -3,12 +3,6 @@ import { Amplify, Auth, Hub, DataStore } from 'aws-amplify';
 import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth';
 import './login.scss'
 
-
-// import awsconfig from '../ /aws-exports';
-
-// 70265350238-e7a1tll74lobi0c24vimt2l49sed28jf.apps.googleusercontent.com
-// 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
-
 const LoginComponent = (props) => {
     // track if user has loggedin 
     const [userInfoObj, setUserInfoObj] = useState({ isLoggedIn: false, data: null });
@@ -28,15 +22,36 @@ const LoginComponent = (props) => {
     const [confirmSignupCode, setConfirmSignupCode] = useState("");
 
     const [user, setUser] = useState(null);
+
+    async function getAuthenticatedUser() {
+        try {
+            const user = await Auth.currentAuthenticatedUser()
+            return user;
+        } catch (e) {
+            console.log("unable to fetch authenticated user");
+        }
+    }
+
     // hooks
     useEffect(() => {
-        Hub.listen('auth', ({ payload: { event, data } }) => {
+        Hub.listen('auth', async ({ payload: { event, data } }) => {
             switch (event) {
                 case 'signIn':
+                    console.log("successfully signed in");
+                    const user = await getAuthenticatedUser();
+                    console.log("user", user);
+                    setUserInfoObj({
+                        isLoggedIn: true,
+                        data: user
+                    });
+                    break;
+
                 case 'cognitoHostedUI':
                     getUser().then(userData => setUser(userData));
                     break;
                 case 'signOut':
+                    DataStore.clear();
+                    console.log("signed out");
                     setUser(null);
                     break;
                 case 'signIn_failure':
@@ -113,6 +128,20 @@ const LoginComponent = (props) => {
         }
     }
 
+    async function signInWithGoogle() {
+        try {
+            const response = await Auth.federatedSignIn({ provider: CognitoHostedUIIdentityProvider.Google });
+            console.log("response", response);
+            setUserInfoObj({
+                ...userInfoObj,
+                isLoggedIn: false,
+            });
+
+        } catch (error) {
+            console.log('error signing in with google', error);
+        }
+    }
+
     async function signOut() {
         try {
             await Auth.signOut();
@@ -128,34 +157,28 @@ const LoginComponent = (props) => {
 
     function renderSignIn() {
         return (
-            <form className='login-body' onSubmit={(e) => {
-                e.preventDefault();
-                signIn();
-            }}>
-                {/* test oauth */}
-                <div>
-                    <button onClick={() => Auth.federatedSignIn({ provider: CognitoHostedUIIdentityProvider.Google })}>Open Google</button>
-                    <button onClick={() => Auth.federatedSignIn()}>Open Hosted UI</button>
-                    <button onClick={() => Auth.signOut()}>Sign Out</button>
-                </div>
+            <div className='login-body'>
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    signIn();
+                }}>
+                    <input required type="text" placeholder="User Name" value={loginUserName}
+                        className="form-input" onChange={(e) => setLoginUserName(e.target.value)} />
 
-                <div>
-                    <p>User: {user ? JSON.stringify(user.attributes) : 'None'}</p>
-                    {user ? (
-                        <button onClick={() => Auth.signOut()}>Sign Out</button>
-                    ) : (
-                        <button onClick={() => Auth.federatedSignIn({ provider: CognitoHostedUIIdentityProvider.Google })}>Federated Sign In</button>
-                    )}
-                </div>
+                    <input required type="password" placeholder="Password" value={loginPassword}
+                        className="form-input" onChange={(e) => setLoginPassword(e.target.value)} />
 
-                <input required type="text" placeholder="User Name" value={loginUserName}
-                    className="form-input" onChange={(e) => setLoginUserName(e.target.value)} />
+                    <input className="submit-btn" type="submit" value={'Sign In'} />
+                </form>
 
-                <input required type="password" placeholder="Password" value={loginPassword}
-                    className="form-input" onChange={(e) => setLoginPassword(e.target.value)} />
+                <input type="image" src="/assets/google-login.png" alt="" className="google-signin"
+                    onClick={(e) => {
+                        console.log("triggered here");
+                        e.preventDefault();
+                        signInWithGoogle();
+                    }} />
+            </div>
 
-                <input className="submit-btn" type="submit" value={'Sign In'} />
-            </form>
         );
     }
 
