@@ -13,12 +13,19 @@
     },
     "categories": {
       "auth": {
-        "todoreact040aa367": {}
+        "todoreact040aa367": {},
+        "true": {}
       },
       "hosting": {
         "amplifyhosting": {
           "appId": "d1e0433wmugskp",
           "type": "cicd"
+        }
+      },
+      "interactions": {
+        "lex1beca326": {
+          "deploymentBucketName": "amplify-todoreact-dev-165410-deployment",
+          "s3Key": "amplify-builds/lex1beca326-795a5a544a4971624841-build.zip"
         }
       }
     }

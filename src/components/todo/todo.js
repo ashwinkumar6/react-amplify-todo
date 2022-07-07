@@ -1,18 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import { DataStore, Storage } from 'aws-amplify';
+import { AmplifyChatbot } from '@aws-amplify/ui-react/legacy';
 import { Todo } from '../../models';
 import { downloadBlob } from '../../utils/file-utils';
 import './todo.scss';
 
+
+// function getLocalStream() {
+//     navigator.mediaDevices.getUserMedia({ video: false, audio: true }).then(stream => {
+//         console.log("here0", stream);
+
+//         window.localStream = stream; // A
+//         console.log("here1", stream);
+
+//         // window.localAudio.srcObject = stream; // B
+//         console.log("here2", stream);
+
+//         // window.localAudio.autoplay = true; // C
+//         console.log("here3");
+
+//     }).catch(err => {
+//         console.log("u got an error:" + err)
+//     });
+// }
+// getLocalStream();
+
+navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(function (stream) {
+        console.log('You let me use your mic!')
+    })
+    .catch(function (err) {
+        console.log('No mic for you!')
+    });
+
+
 Storage.configure({ level: 'private' });
 
 const TodoComponent = (props) => {
+
     const [itemName, setItemName] = useState("");
     const [itemDesc, setitemDesc] = useState("");
     const [itemDate, setItemDate] = useState("");
     const [itemTime, setitemTime] = useState("");
     const [itemFile, setItemFile] = useState(null);
     const [itemList, setItemList] = useState([]);
+
+    const handleChatComplete = (event) => {
+        const { data, err } = event.detail;
+        if (data) alert('Chat fulfilled!', JSON.stringify(data));
+        if (err) alert('Chat failed:', err);
+    };
+
+    useEffect(() => {
+        const chatbotElement = document.querySelector('amplify-chatbot');
+        chatbotElement.addEventListener('chatCompleted', handleChatComplete);
+        return function cleanup() {
+            chatbotElement.removeEventListener('chatCompleted', handleChatComplete);
+        };
+    }, []);
 
     useEffect(() => {
         fetchTasks();
@@ -170,6 +215,15 @@ const TodoComponent = (props) => {
 
                 {/* render completed items */}
                 {renderListItems(true)}
+
+                <AmplifyChatbot
+                    style={{ "--height": "25rem", "--width": "22rem" }}
+                    botName="BookTrip_dev"
+                    botTitle="Book your car (IN DEV)"
+                    welcomeMessage="Say, I need to book a car?"
+                    textEnabled={true}
+                    voiceEnabled={true}
+                />
             </div>
         </div>
 

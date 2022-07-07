@@ -2,7 +2,7 @@
   "version": "1",
   "cognitoConfig": {
     "identityPoolName": "todoreact040aa367_identitypool_040aa367",
-    "allowUnauthenticatedIdentities": false,
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "todore040aa367",
     "userPoolName": "todoreact040aa367_userpool_040aa367",
     "autoVerifiedAttributes": [
@@ -60,7 +60,6 @@
     "authProvidersUserPool": [],
     "hostedUIProviderMeta": "[]",
     "authProviders": [],
-    "hostedUIProviderCreds": "[]",
     "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"https://main.d1e0433wmugskp.amplifyapp.com/\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"https://main.d1e0433wmugskp.amplifyapp.com/\"]}"
   }
 }

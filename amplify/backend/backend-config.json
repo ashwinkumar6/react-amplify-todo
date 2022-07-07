@@ -64,5 +64,12 @@
       "providerPlugin": "awscloudformation",
       "dependsOn": []
     }
+  },
+  "interactions": {
+    "lex1beca326": {
+      "service": "Lex",
+      "providerPlugin": "awscloudformation",
+      "build": true
+    }
   }
 }
