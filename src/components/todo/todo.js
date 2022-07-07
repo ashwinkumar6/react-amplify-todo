@@ -25,19 +25,21 @@ import './todo.scss';
 // }
 // getLocalStream();
 
-navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(function (stream) {
-        console.log('You let me use your mic!')
-    })
-    .catch(function (err) {
-        console.log('No mic for you!')
-    });
+window.Buffer = window.Buffer || require('buffer').Buffer;
+
+// navigator.mediaDevices.getUserMedia({ audio: true })
+//     .then(function (stream) {
+//         window.localStream = stream;
+//         console.log('You let me use your mic!')
+//     })
+//     .catch(function (err) {
+//         console.log('No mic for you!', err);
+    // });
 
 
 Storage.configure({ level: 'private' });
 
 const TodoComponent = (props) => {
-
     const [itemName, setItemName] = useState("");
     const [itemDesc, setitemDesc] = useState("");
     const [itemDate, setItemDate] = useState("");
@@ -223,6 +225,7 @@ const TodoComponent = (props) => {
                     welcomeMessage="Say, I need to book a car?"
                     textEnabled={true}
                     voiceEnabled={true}
+                    conversationModeOn={true}
                 />
             </div>
         </div>
